@@ -1,5 +1,6 @@
 var express = require('express')
 var router = express.Router()
+/*
 const mongoose = require('mongoose')
 
 mongoose.connect('mongodb://localhost:27017/local')
@@ -14,7 +15,7 @@ var UserSchema = new Schema({
 })
 
 var User = mongoose.model('User', UserSchema)
-/* GET users listing. */
+/!* GET users listing. *!/
 router.post('/', function (req, res, next) {
   let userCreds = req.body
   if (!userCreds.login || !userCreds.password) {
@@ -27,5 +28,6 @@ router.post('/', function (req, res, next) {
     res.jsonp({responseFrom: 'server', payload: req.body})
   }
 })
+*/
 
 module.exports = router
