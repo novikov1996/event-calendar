@@ -34,7 +34,8 @@
     "nuxt": "^1.0.0",
     "popper.js": "^1.12.9",
     "vue": "^2.5.13",
-    "vue-full-calendar": "^2.5.2"
+    "vue-full-calendar": "^2.5.2",
+    "webpack-merge": "^4.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
