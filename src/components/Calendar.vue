@@ -69,9 +69,9 @@
             duration: null,
             title: ''
           }
-          objectDefault.title = event.title
           objectDefault.start = that.getMinutes(event.start)
           objectDefault.duration = that.getMinutes(event.end) - objectDefault.start
+          objectDefault.title = event.title
           eventsForJSON.push(objectDefault)
           objectDefault = null
         })
