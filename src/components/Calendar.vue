@@ -1,7 +1,8 @@
 <template lang="jade">
   div.container
     full-calendar(:config="config", :events="events", @event-created="eventCreated")
-    event-modal(v-if="showEventModal", :event="event", @save="saveEvent", @close="closeModal")
+    a#download.btn.btn-primary(:href="'data:' + eventsData", download="events.json") Save JSON
+    event-modal(v-if="showEventModal", :event="event", @save="saveEvent", @close="handleClose")
 </template>
 
 <script>
@@ -19,42 +20,36 @@
     name: 'calendar',
     data () {
       return {
+        test: [],
         event: {},
         showEventModal: false,
         events: [
           {
             title: 'test',
-            start: moment().add(1, 'd'),
-            end: moment().add(1, 'd').add(3, 'h')
+            start: moment().set('hour', 13).set('minute', 20),
+            end: moment().set('hour', 15).set('minute', 20)
           },
           {
             title: 'another test',
-            start: moment().add(2, 'd'),
-            end: moment().add(2, 'd').add(2, 'h')
-          }
-        ],
-        eventSources: [
-          {
-            title: 'test',
-            start: moment().add(3, 'd'),
-            end: moment().add(3, 'd').add(1, 'h')
-          },
-          {
-            title: 'another test',
-            start: moment().add(3, 'd'),
-            end: moment().add(3, 'd').add(6, 'h')
+            start: moment().set('hour', 9).set('minute', 20),
+            end: moment().set('hour', 11).set('minute', 33)
           }
         ],
         config: {
-         /* locale: 'uk',*/
-          defaultView: 'agendaWeek',
+          defaultView: 'agendaDay',
           allDaySlot: false,
+          displayEventTime: false,
           slotLabelFormat: 'h:mm',
           slotLabelInterval: '00:30:00',
           slotEventOverlap: false,
           height: 485,
           minTime: '08:00:00',
-          maxTime: '17:30:00',
+          maxTime: '17:00:01',
+          header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'agendaWeek,agendaDay'
+          },
           eventRender: function (event, element) {
             console.log(event)
           }
@@ -63,7 +58,31 @@
     },
     created () {
     },
+    computed: {
+      eventsData: function () {
+        let that = this
+        let eventsForJSON = []
+        let events = _.cloneDeep(this.events)
+        _.forEach(events, function (event) {
+          let objectDefault = {
+            start: null,
+            duration: null,
+            title: ''
+          }
+          objectDefault.title = event.title
+          objectDefault.start = that.getMinutes(event.start)
+          objectDefault.duration = that.getMinutes(event.end) - objectDefault.start
+          eventsForJSON.push(objectDefault)
+          objectDefault = null
+        })
+        this.test = eventsForJSON
+        return 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(eventsForJSON))
+      }
+    },
     methods: {
+      getMinutes (date) {
+        return moment(date).get('minutes') + (moment(date).subtract(8, 'h').get('hours') * 60)
+      },
       eventCreated (event) {
         this.showEventModal = true
         this.event = {
@@ -71,58 +90,56 @@
           start: event.start,
           end: event.end
         }
-        console.log(event)
+      },
+      saveEvent () {
+        this.showEventModal = false
+        this.events.push(this.event)
+        /*ApiConnector.storeTask(this.task, function (data) { console.log('Saved', data) }, function (e) { console.log(e) })*/
+      },
+      handleClose () {
+        this.showEventModal = false
       }
     }
   }
 </script>
 
-<style>
-  .calendars > div {
-    margin-top: 4px;
-    background-color: #da6666;
-    color: #fff;
-    padding: 1px 7px;
-    border-radius: 7px;
+<style lang="scss">
+  .fc-event, .fc-event:hover {
+    text-overflow: ellipsis;
+    max-width: 200px;
+    background-color: #E2ECF5;
+    border-radius: 0;
+    border-left: 1px solid #6E9ECF;
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
   }
 
-  .calendars > div:nth-child(2) {
-    background-color: #658cda;
+  .fc-title {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    color: black;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 5px;
+    text-overflow: ellipsis;
   }
 
-  .calendars > div:nth-child(3) {
-    background-color: #49b050;
+  .fc-slats {
+    table tbody {
+      tr[data-time] {
+        font-family: 'Open Sans', sans-serif;
+        &:nth-child(odd) {
+          font-size: 16px;
+        }
+        &:nth-child(even) {
+          font-size: 12px;
+        }
+      }
+    }
   }
 
-  .calendars > div:nth-child(4) {
-    background-color: #e7804c;
-  }
-
-  .calendars > div:nth-child(5) {
-    background-color: #8c66da;
-  }
-
-  .calendars > div:nth-child(6) {
-    background-color: #64ad88;
-  }
-
-  .calendars > div:nth-child(7) {
-    background-color: #84aaa5;
-  }
-
-  .calendars > div:nth-child(8) {
-    background-color: #e77399;
-  }
-
-  .calendars > div:nth-child(9) {
-    background-color: #bfbf4b;
-  }
-
-  .calendars > div:nth-child(10) {
-    background-color: #FFCE73;
-  }
-
-  .calendars > div:nth-child(11) {
-    background-color: #0026FF;
+  #download {
+    margin-top: 50px;
   }
 </style>

@@ -1,5 +1,6 @@
 <template lang="jade">
   div.container
+    pre {{user1}}
     .col-xs-12
       label login
       el-input(type="text", v-model="user.email")
@@ -14,7 +15,7 @@
 </template>
 <script>
 
-  /*import ApiConnector from 'src/services/ApiConnector'*/
+  import ApiConnector from '../services/ApiConnector'
   import { Input } from 'element-ui'
 
   export default {
@@ -23,22 +24,24 @@
     },
     data () {
       return {
-       user: {
+        user: {
           email: '',
           password: '',
           confirmPassword: ''
-        }
+        },
+        user1: {}
       }
     },
     methods: {
       register () {
-        console.log(this.user)
-        /*var _this = this
-        ApiConnector.Register(this.user, function (data) {
-          if (data.data.success && data.status === 201) {
-            _this.successfullyRegistered = true
-          }
-        })*/
+        let that = this
+        let test = {
+          'login': 'ddd2d',
+          'password': 'ssss'
+        }
+        ApiConnector.registerUser(test, function (data) {
+          that.user1 = data
+        })
       }
     }
   }
