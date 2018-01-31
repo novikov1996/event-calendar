@@ -15,6 +15,7 @@
     "heroku-postbuild": "npm run build"
   },
   "dependencies": {
+    "ora": "^1.2.0",
     "shelljs": "^0.7.6",
     "axios": "^0.17.1",
     "axios-jsonp": "^1.0.1",
